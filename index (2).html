@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src data:; connect-src https:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Overlap — find shared free time</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Overlap</h1>
+      <p class="tag">Drop in everyone's calendar and see when you're all free.</p>
+    </div>
+    <div class="privacy">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      Calendars are read in your browser and never uploaded.
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <section class="card" aria-labelledby="h-people">
+        <h2 id="h-people">People &amp; calendars</h2>
+        <div class="drop" id="drop">
+          <strong>Drop .ics files here</strong>
+          One file per person is the quickest way to start.
+          <div class="row">
+            <button class="btn primary" id="btnFiles" type="button">Choose files</button>
+            <button class="btn" id="btnLink" type="button">Add link</button>
+            <button class="btn" id="btnPaste" type="button">Paste</button>
+          </div>
+        </div>
+        <input type="file" id="fileIn" accept=".ics,.ical,.ifb,text/calendar" multiple hidden>
+        <input type="file" id="fileInPerson" accept=".ics,.ical,.ifb,text/calendar" multiple hidden>
+        <ul class="people" id="people"></ul>
+        <div class="row" style="margin-top:12px">
+          <button class="btn small ghost" id="btnDemo" type="button">Try sample calendars</button>
+          <button class="btn small ghost hidden" id="btnClear" type="button">Clear all</button>
+        </div>
+        <details>
+          <summary>How do I get a calendar file?</summary>
+          <ul>
+            <li><b>Google Calendar:</b> Settings → Import &amp; export → Export. It downloads a zip; unzip it, one .ics per calendar.</li>
+            <li><b>Apple Calendar:</b> File → Export → Export…</li>
+            <li><b>Outlook:</b> File → Save Calendar (or Share → Publish, then use "Add link").</li>
+          </ul>
+          <p style="margin:6px 0 0">"Add link" works with subscription URLs (webcal:// or https://) from hosts that allow browser access. If a link is blocked, download the file instead.</p>
+        </details>
+      </section>
+
+      <section class="card" aria-labelledby="h-set">
+        <h2 id="h-set">When to look</h2>
+        <div class="fields">
+          <label class="f">Start date<input type="date" id="sStart"></label>
+          <label class="f">Look ahead
+            <select id="sDays"><option value="7">1 week</option><option value="14" selected>2 weeks</option><option value="21">3 weeks</option><option value="28">4 weeks</option><option value="42">6 weeks</option></select>
+          </label>
+          <label class="f">Earliest<select id="sFrom"></select></label>
+          <label class="f">Latest<select id="sTo"></select></label>
+          <div class="full">
+            <div class="f" style="font-size:13px;color:var(--muted);margin-bottom:4px" id="dowLabel">Days</div>
+            <div class="days" id="dows" role="group" aria-labelledby="dowLabel"></div>
+          </div>
+          <label class="f">Needs at least<select id="sDur"></select></label>
+          <label class="f">Gap around events
+            <select id="sBuf"><option value="0">None</option><option value="15">15 min</option><option value="30">30 min</option><option value="60">1 hour</option></select>
+          </label>
+          <label class="f full">Who must be free<select id="sNeed"></select></label>
+          <label class="f full">Time zone<select id="sTz"></select></label>
+        </div>
+        <div class="opts">
+          <label><input type="checkbox" id="oAllDay"> Treat all-day events as busy</label>
+          <label><input type="checkbox" id="oSnap" checked> Start and end on the hour or half hour</label>
+          <label><input type="checkbox" id="oTitles"> Show event names when hovering</label>
+        </div>
+      </section>
+    </aside>
+
+    <main id="results" aria-live="polite"></main>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlgForm">
+    <h3 id="dlgTitle">Add calendar</h3>
+    <label class="f">Whose calendar is this?
+      <select id="dlgPerson"></select>
+    </label>
+    <label class="f" id="dlgNameWrap">Name<input class="box" type="text" id="dlgName" placeholder="e.g. Sam"></label>
+    <label class="f" id="dlgUrlWrap">Calendar link<input class="box" type="url" id="dlgUrl" placeholder="webcal://… or https://…/calendar.ics"></label>
+    <label class="f" id="dlgTextWrap">Calendar text<textarea id="dlgText" placeholder="BEGIN:VCALENDAR&#10;…"></textarea></label>
+    <div class="note" id="dlgNote" role="status"></div>
+    <div class="err" id="dlgErr" role="alert"></div>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn" type="button" id="dlgCancel">Cancel</button>
+      <button class="btn primary" type="submit" id="dlgOk">Add</button>
+    </div>
+  </form>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
